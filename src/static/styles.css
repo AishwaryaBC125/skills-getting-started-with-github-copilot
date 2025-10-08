@@ -109,6 +109,22 @@ section h3 {
   border: 1px solid rgba(13, 71, 161, 0.08);
 }
 
+/* Delete button shown next to participant badge */
+.participant-delete {
+  margin-left: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 4px;
+  vertical-align: middle;
+}
+
+.participant-delete:hover {
+  transform: scale(1.08);
+}
+
 .no-participants {
   font-style: italic;
   color: #777;
