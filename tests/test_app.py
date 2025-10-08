@@ -19,8 +19,9 @@ def test_signup_and_prevent_duplicate():
     email = "testuser@mergington.edu"
 
     # Ensure clean state
-    if email in activities[activity]["participants"]:
-        activities[activity]["participants"].remove(email)
+    if activity in activities and "participants" in activities[activity]:
+        if email in activities[activity]["participants"]:
+            activities[activity]["participants"].remove(email)
 
     # Signup should succeed
     resp = client.post(f"/activities/{activity}/signup?email={email}")
@@ -32,15 +33,18 @@ def test_signup_and_prevent_duplicate():
     resp2 = client.post(f"/activities/{activity}/signup?email={email}")
     assert resp2.status_code == 400
     assert "already" in resp2.json().get("detail", "").lower()
-
     # Cleanup
+    if activity in activities and "participants" in activities[activity]:
+        if email in activities[activity]["participants"]:
+            activities[activity]["participants"].remove(email)
     activities[activity]["participants"].remove(email)
 
 
 def test_unregister_participant():
-    activity = "Programming Class"
-    email = "remove_me@mergington.edu"
-
+    # Ensure participant is present
+    if activity in activities and "participants" in activities[activity]:
+        if email not in activities[activity]["participants"]:
+            activities[activity]["participants"].append(email)
     # Ensure participant is present
     if email not in activities[activity]["participants"]:
         activities[activity]["participants"].append(email)
@@ -58,9 +62,10 @@ def test_unregister_participant():
 async def test_async_client_signup_and_unregister():
     # Use httpx AsyncClient to exercise async flow (if any)
     import httpx
-
-    activity = "Math Olympiad"
-    email = "async_tester@mergington.edu"
+    # Cleanup from previous runs
+    if activity in activities and "participants" in activities[activity]:
+        if email in activities[activity]["participants"]:
+            activities[activity]["participants"].remove(email)
 
     # Cleanup from previous runs
     if email in activities[activity]["participants"]:
